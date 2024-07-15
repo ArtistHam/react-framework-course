@@ -1,16 +1,34 @@
-import * as styles from "./App.module.css";
-import {
-  Route,
-  Routes,
-  Link,
-  useNavigate,
-  useMatch,
-  useLocation,
-  useParams,
-} from "react-router-dom";
+import { Route, Routes, Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 const App = () => {
   const navigate = useNavigate();
+
+  const [facts, setFacts] = useState([]);
+
+  const getRandomFacts = () => {
+    return axios({
+      method: "GET",
+      url: "https://cat-fact.herokuapp.com/facts/random",
+      params: {
+        amount: 2,
+      },
+    });
+  };
+
+  const getRandomFact = () => {
+    return axios({
+      method: "GET",
+      url: "https://cat-fact.herokuapp.com/facts/random",
+    });
+  };
+
+  useEffect(() => {
+    Promise.race([getRandomFacts(), getRandomFact()]).then((result) => {
+      console.log(result);
+    });
+  }, []);
 
   return (
     <>
@@ -21,7 +39,17 @@ const App = () => {
         <Link to="/about">About</Link>
       </nav>
       <Routes>
-        <Route path="/" element={<div>Main</div>} />
+        <Route
+          path="/"
+          element={
+            <div>
+              Main Fact:{" "}
+              {facts.map((fact) => (
+                <p>{fact}</p>
+              ))}
+            </div>
+          }
+        />
         <Route
           path="/about"
           element={
@@ -32,19 +60,11 @@ const App = () => {
         />
 
         <Route index path="/news" element={<div>News</div>} />
-        <Route path="/news/:newsId" element={<NewsPost />} />
 
         <Route path="*" element={<div>404</div>} />
       </Routes>
     </>
   );
-};
-
-const NewsPost = () => {
-  const params = useParams();
-
-  console.log(params);
-  return <div>{params.newsId}</div>;
 };
 
 export default App;
