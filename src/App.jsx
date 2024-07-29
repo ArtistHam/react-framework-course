@@ -1,9 +1,13 @@
 import { Route, Routes, Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { increment, decrement, incrementByAmount } from "./counter";
 
 const App = () => {
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
 
   const [facts, setFacts] = useState([]);
 
@@ -43,10 +47,31 @@ const App = () => {
           path="/"
           element={
             <div>
-              Main Fact:{" "}
+              Main Fact:
               {facts.map((fact) => (
                 <p>{fact}</p>
               ))}
+              <button
+                onClick={() => {
+                  dispatch(increment());
+                }}
+              >
+                +1
+              </button>
+              <button
+                onClick={() => {
+                  dispatch(decrement());
+                }}
+              >
+                -1
+              </button>
+              <button
+                onClick={() => {
+                  dispatch(incrementByAmount(10));
+                }}
+              >
+                +10
+              </button>
             </div>
           }
         />
